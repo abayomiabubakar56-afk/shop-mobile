@@ -6,6 +6,7 @@
   "orientation": "any",
   "scope": "/",
   "short_name": "glittery-strudel-f27d63.netlify",
+  "description": "Corner Shop is a simple mobile-friendly online shopping app.",
   "start_url": "/",
   "theme_color": "#ffffff",
   "id": "Corner Shop",
