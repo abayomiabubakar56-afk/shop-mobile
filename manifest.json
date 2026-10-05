@@ -8,5 +8,17 @@
   "short_name": "glittery-strudel-f27d63.netlify",
   "start_url": "/",
   "theme_color": "#ffffff",
-  "id": "Corner Shop"
+  "id": "Corner Shop",
+ "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
