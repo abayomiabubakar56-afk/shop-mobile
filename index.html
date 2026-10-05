@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corner Shop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#f6f2ea;--paper:#fffdf9;--ink:#14110f;--muted:#6f685e;--line:#e6dfd2;--accent:#ff5a1f;--accent-dark:#e0460f;--deep:#10302a;--shadow:0 1px 2px rgba(20,17,15,.05),0 14px 34px rgba(20,17,15,.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"DM Sans",system-ui,sans-serif;background:radial-gradient(52rem 26rem at 85% -8%,#ffdcc8 0,transparent 65%) no-repeat,var(--bg);color:var(--ink);line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+h1,h2,h3,.brand{font-family:Fraunces,Georgia,serif;font-weight:600;letter-spacing:-.02em}
+a{color:inherit;text-decoration:none}
+button,input,textarea{font:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:24px;width:100%}
+main{flex:1;padding-bottom:72px}
+
+header{position:sticky;top:0;z-index:10;background:rgba(246,242,234,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.bar{max-width:1120px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-size:1.5rem}
+.brand i{color:var(--accent);font-style:normal}
+nav{display:flex;align-items:center;gap:8px}
+.nl{padding:8px 14px;border-radius:99px;font-weight:500;font-size:.92rem;color:var(--muted)}
+.nl:hover{background:rgba(20,17,15,.06);color:var(--ink)}
+.cart{background:var(--ink);color:#fff;padding:8px 14px 8px 16px;border-radius:99px;font-weight:700;font-size:.9rem;display:inline-flex;gap:8px;align-items:center}
+.cart b{background:var(--accent);border-radius:99px;min-width:22px;height:22px;display:grid;place-items:center;font-size:.78rem;padding:0 6px}
+.who{display:flex;align-items:center;gap:8px;margin-left:6px;font-size:.88rem}
+.av{width:30px;height:30px;border-radius:50%;background:var(--deep);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.85rem}
+
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;padding:64px 0 48px}
+.pill{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:.8rem;font-weight:700;color:var(--accent-dark);margin-bottom:18px}
+.hero h1{font-size:clamp(2.6rem,6vw,4.4rem);line-height:1.02;margin-bottom:16px}
+.hero h1 em{color:var(--accent);font-style:italic}
+.hero p{color:var(--muted);max-width:460px;font-size:1.05rem;margin-bottom:26px}
+.art{position:relative;height:340px}
+.art span{position:absolute;border-radius:28px;box-shadow:var(--shadow)}
+.art span:nth-child(1){inset:20px 90px 60px 0;background:linear-gradient(135deg,#10302a,#2f6f5e);transform:rotate(-6deg)}
+.art span:nth-child(2){inset:0 0 90px 110px;background:linear-gradient(135deg,#ff5a1f,#ff9a5a);transform:rotate(5deg)}
+.art span:nth-child(3){inset:150px 40px 0 60px;background:linear-gradient(135deg,#5b3df5,#9b8cff);transform:rotate(-2deg)}
+.perks{display:flex;gap:10px 28px;flex-wrap:wrap;padding:18px 0;border-block:1px solid var(--line);font-size:.9rem;color:var(--muted);margin-bottom:44px}
+.perks b{color:var(--accent);margin-right:6px}
+.sh{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px}
+.sh h2{font-size:1.8rem}
+.sh span{color:var(--muted);font-size:.9rem}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:22px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow);transition:transform .25s,box-shadow .25s;animation:rise .55s both}
+.card:hover{transform:translateY(-5px);box-shadow:0 2px 4px rgba(20,17,15,.06),0 22px 44px rgba(20,17,15,.14)}
+.tile{aspect-ratio:5/4;display:grid;place-items:center;position:relative;overflow:hidden;font-family:Fraunces,Georgia,serif;font-style:italic;font-size:5.2rem;color:rgba(255,255,255,.92)}
+.tile::after{content:"";position:absolute;width:70%;aspect-ratio:1;border-radius:50%;border:1.5px solid rgba(255,255,255,.35);right:-20%;bottom:-30%}
+.body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:4px;flex:1}
+.body h3{font-size:1.15rem}
+.body p{font-size:.88rem;color:var(--muted);flex:1}
+.foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;gap:8px}
+.price{font-weight:700;font-size:1.1rem}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;border:0;border-radius:99px;padding:11px 22px;font-weight:700;cursor:pointer;transition:background .15s,transform .15s}
+.btn:hover{background:var(--accent-dark)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn.dark{background:var(--ink)}
+.btn.dark:hover{background:#2c2723}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.ghost:hover{background:rgba(20,17,15,.05)}
+.btn.sm{padding:7px 14px;font-size:.85rem}
+
+.page{padding-top:48px}
+.page h1{font-size:clamp(2rem,4vw,2.8rem);margin-bottom:6px}
+.sub{color:var(--muted);margin-bottom:28px}
+.cols{display:grid;grid-template-columns:1.25fr 1fr;gap:24px;align-items:start}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--shadow)}
+.panel h2{font-size:1.25rem;margin-bottom:8px}
+.stick{position:sticky;top:90px}
+.row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.sw{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;color:#fff;font-family:Fraunces,Georgia,serif;font-style:italic;font-size:1.5rem;flex:none}
+.info{flex:1;min-width:120px;display:flex;flex-direction:column}
+.info span{font-size:.85rem;color:var(--muted)}
+.qty{display:flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:99px;padding:3px}
+.qty button{width:28px;height:28px;border-radius:50%;border:0;background:transparent;cursor:pointer;font-size:1.05rem}
+.qty button:hover{background:rgba(20,17,15,.07)}
+.qty span{min-width:20px;text-align:center;font-weight:700}
+.rm{border:0;background:none;color:var(--muted);font-size:.82rem;text-decoration:underline;cursor:pointer}
+.rm:hover{color:#b91c1c}
+.total{display:flex;justify-content:space-between;font-weight:700;font-size:1.2rem;padding-top:18px}
+label{display:block;font-size:.82rem;font-weight:700;margin:14px 0 6px}
+input,textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fff;transition:border-color .15s,box-shadow .15s}
+input:focus,textarea:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 4px rgba(255,90,31,.15)}
+input[readonly]{background:var(--bg);color:var(--muted)}
+.msg{margin-top:12px;font-size:.9rem}
+.err{color:#b91c1c}
+.ok{color:#15803d}
+.done{text-align:center;max-width:520px;margin:0 auto}
+.check{width:68px;height:68px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:2rem;margin:0 auto 18px}
+
+footer{border-top:1px solid var(--line);padding:24px;text-align:center;color:var(--muted);font-size:.85rem}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,12px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:99px;font-size:.9rem;opacity:0;pointer-events:none;transition:.25s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:820px){
+  .hero{grid-template-columns:1fr;padding-top:40px}
+  .art{display:none}
+  .cols{grid-template-columns:1fr}
+  .stick{position:static}
+  .who span{display:none}
+  .bar{padding:12px 16px}
+  .wrap{padding-inline:16px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <a href="#/" class="brand">Corner Shop<i>.</i></a>
+    <nav>
+      <a class="nl" href="#/">Shop</a>
+      <a class="cart" href="#/checkout">Cart <b id="cartCount">0</b></a>
+      <span class="who" id="authBox"></span>
+    </nav>
+  </div>
+</header>
+<main id="app"><div class="wrap page"><p class="sub">Loading...</p></div></main>
+<footer>© 2026 Corner Shop. Built with Supabase and Netlify.</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = "https://qdbuhylmrmnqyqplejmp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_jJJkDs28xreR4nrF05xx3w_xP0YEhHJ";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { flowType: "pkce" } });
+
+const app = document.getElementById("app");
+const grads = [["#ff5a1f", "#ff9a5a"], ["#10302a", "#2f6f5e"], ["#5b3df5", "#9b8cff"], ["#d6336c", "#ff8fab"], ["#0b5fff", "#6fb0ff"], ["#7a8f1a", "#c5d85a"]];
+let products = [], user = null, cart = {}, draft = { name: "", address: "" };
+try { cart = JSON.parse(localStorage.getItem("cart") || "{}"); } catch (e) { cart = {}; }
+
+const naira = n => "₦" + Number(n).toLocaleString("en-NG");
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const grad = i => { const c = grads[i % grads.length]; return `linear-gradient(135deg,${c[0]},${c[1]})`; };
+
+function saveCart() { try { if (user) localStorage.removeItem("cart"); else localStorage.setItem("cart", JSON.stringify(cart)); } catch (e) {} updateCount(); }
+function updateCount() { document.getElementById("cartCount").textContent = Object.values(cart).reduce((a, b) => a + b, 0); }
+function toast(t) { const el = document.getElementById("toast"); el.textContent = t; el.classList.add("show"); setTimeout(() => el.classList.remove("show"), 1400); }
+function cartItems() {
+  return Object.keys(cart).map(id => {
+    const p = products.find(x => String(x.id) === id);
+    return p ? { ...p, qty: cart[id] } : null;
+  }).filter(Boolean);
+}
+function cartTotal() { return cartItems().reduce((s, i) => s + i.price_ngn * i.qty, 0); }
+
+/* ---------- cart sync (Supabase) ---------- */
+let cartChan = null, lastPush = 0;
+async function pushCart(id) {
+  if (!user) return;
+  lastPush = Date.now();
+  const qty = cart[id];
+  if (!qty) { await sb.from("cart_items").delete().eq("user_id", user.id).eq("product_id", String(id)); return; }
+  const p = products.find(x => String(x.id) === String(id));
+  if (!p) return;
+  await sb.from("cart_items").upsert({ user_id: user.id, product_id: String(id), name: p.name, price: p.price_ngn, quantity: qty }, { onConflict: "user_id,product_id" });
+}
+async function refreshCart() {
+  const { data } = await sb.from("cart_items").select("*").eq("user_id", user.id);
+  cart = {};
+  (data || []).forEach(r => cart[r.product_id] = r.quantity);
+  saveCart();
+}
+async function syncOnLogin() {
+  if (!products.length) { const { data } = await sb.from("products").select("*").order("id"); products = data || []; }
+  const guest = { ...cart };
+  await refreshCart();
+  for (const id of Object.keys(guest)) if (!(id in cart)) { cart[id] = guest[id]; await pushCart(id); }
+  saveCart();
+}
+function subscribeCart() {
+  unsubscribeCart();
+  cartChan = sb.channel("cart-" + user.id)
+    .on("postgres_changes", { event: "*", schema: "public", table: "cart_items", filter: "user_id=eq." + user.id }, async () => {
+      if (Date.now() - lastPush < 1500) return;
+      await refreshCart();
+      if (location.hash === "#/checkout") renderCheckout();
+    }).subscribe();
+}
+function unsubscribeCart() { if (cartChan) { sb.removeChannel(cartChan); cartChan = null; } }
+
+/* ---------- auth ---------- */
+function renderAuth() {
+  const box = document.getElementById("authBox");
+  if (user) {
+    const name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    box.innerHTML = `<div class="av">${esc(name[0].toUpperCase())}</div><span>${esc(name.split(" ")[0])}</span><button class="btn ghost sm" data-act="signout">Sign out</button>`;
+  } else {
+    box.innerHTML = `<button class="btn dark sm" data-act="signin">Sign in with Google</button>`;
+  }
+}
+async function signIn() {
+  try { localStorage.setItem("afterLogin", location.hash || "#/"); } catch (e) {}
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: location.origin + location.pathname }
+  });
+  if (error) toast(error.message);
+}
+async function signOut() { await sb.auth.signOut(); }
+
+/* ---------- pages ---------- */
+function renderShop() {
+  const cards = products.map((p, i) => `<article class="card" style="animation-delay:${i * 70}ms"><div class="tile" style="background:${grad(i)}">${esc(p.name[0])}</div><div class="body"><h3>${esc(p.name)}</h3><p>${esc(p.description)}</p><div class="foot"><span class="price">${naira(p.price_ngn)}</span><button class="btn sm" data-act="add" data-id="${p.id}">Add to cart</button></div></div></article>`).join("");
+  app.innerHTML = `<div class="wrap">
+    <section class="hero">
+      <div>
+        <span class="pill">New season picks</span>
+        <h1>Everyday carry, <em>made simple.</em></h1>
+        <p>Bags, wallets and accessories you will actually use. Sign in with Google, check out in a minute, and pay on delivery.</p>
+        <button class="btn" data-act="scroll">Shop the collection</button>
+      </div>
+      <div class="art" aria-hidden="true"><span></span><span></span><span></span></div>
+    </section>
+    <div class="perks"><div><b>✓</b>Pay on delivery</div><div><b>✓</b>Quick Google sign-in</div><div><b>✓</b>Email confirmation for every order</div></div>
+    <div class="sh" id="products"><h2>The collection</h2><span>${products.length} items</span></div>
+    <div class="grid">${cards}</div>
+  </div>`;
+}
+
+function renderCheckout() {
+  const items = cartItems();
+  if (!items.length) {
+    app.innerHTML = `<div class="wrap page"><h1>Your bag is empty</h1><p class="sub">Add something from the shop first.</p><a class="btn" href="#/">Back to the shop</a></div>`;
+    return;
+  }
+  const rows = items.map(i => {
+    const idx = products.findIndex(p => p.id === i.id);
+    return `<div class="row"><div class="sw" style="background:${grad(idx)}">${esc(i.name[0])}</div><div class="info"><strong>${esc(i.name)}</strong><span>${naira(i.price_ngn)} each</span></div><div class="qty"><button data-act="dec" data-id="${i.id}" aria-label="Decrease">-</button><span>${i.qty}</span><button data-act="inc" data-id="${i.id}" aria-label="Increase">+</button></div><button class="rm" data-act="rm" data-id="${i.id}" aria-label="Remove ${esc(i.name)}">Remove</button></div>`;
+  }).join("");
+  const fullName = draft.name || (user && user.user_metadata && user.user_metadata.full_name) || "";
+  const form = user
+    ? `<form id="orderForm"><label for="name">Full name</label><input id="name" required value="${esc(fullName)}"><label for="email">Email</label><input id="email" readonly value="${esc(user.email)}"><label for="address">Delivery address</label><textarea id="address" rows="3" required placeholder="Street, city, state">${esc(draft.address)}</textarea><div class="msg err" id="formMsg"></div><button class="btn" style="width:100%;margin-top:16px" id="placeBtn">Place order</button></form>`
+    : `<p class="sub">Sign in to place your order. Your bag will be waiting.</p><button class="btn" data-act="signin">Sign in with Google</button>`;
+  app.innerHTML = `<div class="wrap page"><h1>Checkout</h1><p class="sub">Review your bag and enter your delivery details.</p><div class="cols"><div class="panel"><h2>Your bag</h2>${rows}<div class="total"><span>Total</span><span>${naira(cartTotal())}</span></div></div><div class="panel stick"><h2>Delivery details</h2>${form}</div></div></div>`;
+  const f = document.getElementById("orderForm");
+  if (f) f.addEventListener("submit", placeOrder);
+}
+
+async function placeOrder(e) {
+  e.preventDefault();
+  const btn = document.getElementById("placeBtn"), msg = document.getElementById("formMsg");
+  const reset = text => { msg.textContent = text; btn.disabled = false; btn.textContent = "Place order"; };
+  btn.disabled = true; btn.textContent = "Placing order..."; msg.textContent = "";
+
+  const items = cartItems(), total = cartTotal();
+  const { data: order, error } = await sb.from("orders").insert({
+    user_id: user.id,
+    customer_name: document.getElementById("name").value.trim(),
+    customer_email: user.email,
+    address: document.getElementById("address").value.trim(),
+    total_ngn: total
+  }).select().single();
+  if (error) return reset("Could not save your order: " + error.message);
+
+  const { error: e2 } = await sb.from("order_items").insert(items.map(i => ({
+    order_id: order.id, product_id: i.id, product_name: i.name, price_ngn: i.price_ngn, quantity: i.qty
+  })));
+  if (e2) return reset("Could not save the order items: " + e2.message);
+
+  let emailed = false;
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const r = await fetch("/.netlify/functions/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + session.access_token },
+      body: JSON.stringify({ order_id: order.id })
+    });
+    emailed = r.ok;
+  } catch (err) {}
+
+  cart = {}; draft = { name: "", address: "" }; saveCart();
+  lastPush = Date.now();
+  await sb.from("cart_items").delete().eq("user_id", user.id);
+  app.innerHTML = `<div class="wrap page"><div class="panel done"><div class="check">✓</div><h1>Thank you, order #${order.id} is confirmed</h1><p class="sub">Total: ${naira(total)} (pay on delivery)</p><p class="msg ${emailed ? "ok" : "err"}">${emailed ? "A confirmation email is on its way to " + esc(user.email) + "." : "Your order is saved, but the confirmation email could not be sent."}</p><a class="btn" href="#/" style="margin-top:18px">Keep shopping</a></div></div>`;
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-act]");
+  if (! b) return;
+  const id = b.dataset.id, act = b.dataset.act;
+  if (act === "signin") signIn();
+  else if (act === "signout") signOut();
+  else if (act === "scroll") document.getElementById("products").scrollIntoView({ behavior: "smooth" });
+  else if (act === "add") { cart[id] = (cart[id] || 0) + 1; saveCart(); pushCart(id); toast("Added to cart"); }
+  else if (act === "inc") { cart[id]++; saveCart(); pushCart(id); renderCheckout(); }
+  else if (act === "dec") { cart[id]--; if (cart[id] <= 0) delete cart[id]; saveCart(); pushCart(id); renderCheckout(); }
+  else if (act === "rm") { delete cart[id]; saveCart(); pushCart(id); renderCheckout(); }
+});
+app.addEventListener("input", e => {
+  if (e.target.id === "name") draft.name = e.target.value;
+  if (e.target.id === "address") draft.address = e.target.value;
+});
+
+function route() { if (location.hash === "#/checkout") renderCheckout(); else renderShop(); }
+window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
+
+sb.auth.onAuthStateChange((_ev, session) => {
+  const next = session ? session.user : null;
+  if ((next && next.id) !== (user && user.id)) {
+    user = next; renderAuth();
+    setTimeout(async () => {
+      if (user) { await syncOnLogin(); subscribeCart(); }
+      else { cart = {}; saveCart(); unsubscribeCart(); }
+      if (products.length) route();
+    }, 0);
+  }
+});
+
+(async function init() {
+  updateCount();
+  const { data, error } = await sb.from("products").select("*").order("id");
+  if (error) { app.innerHTML = `<div class="wrap page"><p class="msg err">Could not load products: ${esc(error.message)}</p></div>`; }
+  else products = data;
+  const { data: { session } } = await sb.auth.getSession();
+  user = session ? session.user : null;
+  renderAuth();
+  if (user && !cartChan) { await syncOnLogin(); subscribeCart(); }
+  let back = null;
+  try { back = localStorage.getItem("afterLogin"); localStorage.removeItem("afterLogin"); } catch (e) {}
+  if (user && back && back !== location.hash) location.hash = back;
+  else if (!error) route();
+})();
+</script>
+</body>
+</html>
