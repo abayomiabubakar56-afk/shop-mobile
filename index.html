@@ -52,7 +52,7 @@ nav{display:flex;align-items:center;gap:8px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:22px}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow);transition:transform .25s,box-shadow .25s;animation:rise .55s both}
 .card:hover{transform:translateY(-5px);box-shadow:0 2px 4px rgba(20,17,15,.06),0 22px 44px rgba(20,17,15,.14)}
-.{aspect-ratio:5tile/4;display:grid;place-items:center;position:relative;overflow:hidden;font-family:Fraunces,Georgia,serif;font-style:italic;font-size:5.2rem;color:rgba(255,255,255,.92)}
+.{aspect-ratio:5tile/4;display:grid;place-items:center;position:relative;overflow:hidden;font-family:Fraunces,Georgia,serif;font-style:italic;font-size:5.2rem;color:rgba(255,255,255,.92); pointer-events:none}
 .tile::after{content:"";position:absolute;width:70%;aspect-ratio:1;border-radius:50%;border:1.5px solid rgba(255,255,255,.35);right:-20%;bottom:-30%}
 .tile img{
   width:90%;
