@@ -52,8 +52,19 @@ nav{display:flex;align-items:center;gap:8px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:22px}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow);transition:transform .25s,box-shadow .25s;animation:rise .55s both}
 .card:hover{transform:translateY(-5px);box-shadow:0 2px 4px rgba(20,17,15,.06),0 22px 44px rgba(20,17,15,.14)}
-.tile{aspect-ratio:5/4;display:grid;place-items:center;position:relative;overflow:hidden;font-family:Fraunces,Georgia,serif;font-style:italic;font-size:5.2rem;color:rgba(255,255,255,.92)}
+.{aspect-ratio:5tile/4;display:grid;place-items:center;position:relative;overflow:hidden;font-family:Fraunces,Georgia,serif;font-style:italic;font-size:5.2rem;color:rgba(255,255,255,.92)}
 .tile::after{content:"";position:absolute;width:70%;aspect-ratio:1;border-radius:50%;border:1.5px solid rgba(255,255,255,.35);right:-20%;bottom:-30%}
+.tile img{
+  width:90%;
+  height:90%;
+  max-width:180px;
+  max-height:180px;
+  object-fit:contain;
+  display:block;
+  position:relative;
+  z-index:2;
+}
+
 .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:4px;flex:1}
 .body h3{font-size:1.15rem}
 .body p{font-size:.88rem;color:var(--muted);flex:1}
@@ -212,7 +223,7 @@ async function signOut() { await sb.auth.signOut(); }
 
 /* ---------- pages ---------- */
 function renderShop() {
-  const cards = products.map((p, i) => `<article class="card" style="animation-delay:${i * 70}ms"><div class="tile" style="background:${grad(i)}">${esc(p.name[0])}</div><div class="body"><h3>${esc(p.name)}</h3><p>${esc(p.description)}</p><div class="foot"><span class="price">${naira(p.price_ngn)}</span><button class="btn sm" data-act="add" data-id="${p.id}">Add to cart</button></div></div></article>`).join("");
+  const cards = products.map((p, i) => `<article class="card" style="animation-delay:${i * 70}ms"><div class="tile"><img src="${esc(p.image)}" alt="${esc(p.name)}"></div></div><div class="body"><h3>${esc(p.name)}</h3><p>${esc(p.description)}</p><div class="foot"><span class="price">${naira(p.price_ngn)}</span><button class="btn sm" data-act="add" data-id="${p.id}">Add to cart</button></div></div></article>`).join("");
   app.innerHTML = `<div class="wrap">
     <section class="hero">
       <div>
@@ -223,7 +234,7 @@ function renderShop() {
       </div>
       <div class="art" aria-hidden="true"><span></span><span></span><span></span></div>
     </section>
-    <div class="perks"><div><b>✓</b>Pay on delivery</div><div><b>✓</b>Quick Google sign-in</div><div><b>✓</b>Email confirmation for every order</div></div>
+    <div class="perks"><div><b>✓</b>Pay on delivery</div><divF><b>✓</b>Quick Google sign-in</div><div><b>✓</b>Email confirmation for every order</div></div>
     <div class="sh" id="products"><h2>The collection</h2><span>${products.length} items</span></div>
     <div class="grid">${cards}</div>
   </div>`;
