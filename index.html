@@ -184,7 +184,7 @@ async function refreshCart() {
   saveCart();
 }
 async function syncOnLogin() {
-  if (!products.length) { const { data } = await sb.from("products").select("*").order("id"); products = data || []; }
+  if (!products.length) { const { data } = await sb.from("products").select("*").order("id"); products = data || []; console.log(products);}
   const guest = { ...cart };
   await refreshCart();
   for (const id of Object.keys(guest)) if (!(id in cart)) { cart[id] = guest[id]; await pushCart(id); }
@@ -223,7 +223,7 @@ async function signOut() { await sb.auth.signOut(); }
 
 /* ---------- pages ---------- */
 function renderShop() {
-  const cards = products.map((p, i) => `<article class="card" style="animation-delay:${i * 70}ms"><div class="tile"><img src="${esc(p.image)}" alt="${esc(p.name)}"></div></div><div class="body"><h3>${esc(p.name)}</h3><p>${esc(p.description)}</p><div class="foot"><span class="price">${naira(p.price_ngn)}</span><button class="btn sm" data-act="add" data-id="${p.id}">Add to cart</button></div></div></article>`).join("");
+  const cards = products.map((p, i) => `<article class="card" style="animation-delay:${i * 70}ms"><div class="tile"><img src="${esc(p.image)}" alt="${esc(p.name)}"></div></div><div class="body"><h3>${esc(p.name)}</h3><p>${esc(p.description)}</p><div class="foot"><span class="price">${naira(p.price_ngn)}</span><button class="btn sm" ="add" data-data-actid="${p.id}">Add to cart</button></div></div></article>`).join("");
   app.innerHTML = `<div class="wrap">
     <section class="hero">
       <div>
